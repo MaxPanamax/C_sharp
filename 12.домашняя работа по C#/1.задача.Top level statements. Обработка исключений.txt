@@ -1,0 +1,96 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+//Задание 1
+//Пользователь вводит в строку с клавиатуры логическое выражение.
+//    Например, 3>2 или 7<3. Программа должна посчитать результат 
+//    введенного выражения и дать результат true или false. В строке
+//    могут быть только целые числа и операторы: <, >, <=, >=, ==, !=.
+//    Для обработки ошибок ввода используйте механизм исключений.
+
+namespace Ponomarenko_homework
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            void Decision()
+            {
+                Console.WriteLine(" Введите вырожение (например 5>4)\n" +
+                    " Программа работает только с целыми числами и операторами сравнения:" +
+                    " <, >, <=, >=, ==, != ");
+                string st = Console.ReadLine();
+                string st_O = string.Empty;
+                int index_O = -1;
+                for (int i = 0; i < st.Length; i++)
+                {
+                    if (st[i] == '>' || st[i] == '<' || st[i] == '!' || st[i] == '=') //?символ в строке
+                    {
+                        index_O = i; //искомый индекс
+                        break;
+                    }
+                }
+                if (index_O == 0 || index_O == -1)
+                    throw new MyStringException();
+                else
+                {
+                    try
+                    {
+                        int num = int.Parse(st.Substring(0, index_O));
+                        st_O += st[index_O];
+                        if (st[index_O + 1] == '=') //ищу "=" 
+                        {
+                            st_O += st[index_O + 1];
+                            index_O += 1;
+                        }
+                        int num1 = int.Parse(st.Substring(index_O + 1, st.Length - 1 - index_O));
+                        switch (st_O)
+                        {
+                            case ">":
+                                Console.WriteLine(num > num1);
+                                break;
+                            case "<":
+                                Console.WriteLine(num < num1);
+                                break;
+                            case "<=":
+                                Console.WriteLine(num <= num1);
+                                break;
+                            case ">=":
+                                Console.WriteLine(num >= num1);
+                                break;
+                            case "==":
+                                Console.WriteLine(num == num1);
+                                break;
+                            case "!=":
+                                Console.WriteLine(num != num1);
+                                break;
+                            default: throw new MyStringException();
+                        }
+                    }
+                    catch (MyStringException myStr)
+                    {
+                        Console.WriteLine(myStr.Message);
+                        Console.WriteLine(myStr.TimeException);
+                    }
+                    catch (Exception excep) { Console.WriteLine(excep.Message); }
+                }
+            }
+
+            Decision();
+            Console.WriteLine("Если хотитет продолжить нажмите 1, если выйти любую");
+            string a=Console.ReadLine();
+            if (a == "1") { Decision(); }
+            else { return; }
+        }
+        public class MyStringException : ApplicationException //Мое исключение
+        {
+            public DateTime TimeException { get; private set; }
+            public MyStringException() : base("Некорректный ввод")
+            {
+                TimeException = DateTime.Now;
+            }
+        }
+    }
+}

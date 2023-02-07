@@ -1,0 +1,267 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Collections;
+//Задание 2
+//Создайте приложение «Список книг для прочтения» (поля: название, автор, количество страниц).
+//Приложение должно позволять добавлять книги в список, удалять книги из списка, проверять есть 
+//    ли книга в списке, и т. д. Используйте механизм свойств, перегрузки операторов, индексаторов.
+
+namespace Ponomarenko_library
+{
+    class Book
+    {
+        public string Name { get; private set; }
+        public string Author { get; private set; }
+        public int Number_of_pages { get; private set; }
+
+        public Book(string name, string author, int number_of_pages)
+        {
+            Name = name;
+            Author = author;
+            Number_of_pages = number_of_pages;
+        }
+    }
+
+    class Vault
+    {
+        private List<Book> _books = new List<Book>();
+
+        public Vault()
+        {
+            _books.Add(new Book("Руслан и Людмила", "А.С. Пушкин", 128));
+            _books.Add(new Book("Дyxless. Повесть о ненастоящем человеке", "С.С.Минаев", 352));
+            _books.Add(new Book("Одиночество в Сети", "Я.Л.Вишневский", 480));
+            _books.Add(new Book("Девушка с татуировкой дракона", "С.Ларсон", 736));
+        }
+
+        public void AddBoock()
+        {
+            string name;
+            string author;
+            string nameAuthor;
+            string surnameAuthor;
+            int yearOfRelease;
+            Console.Write("Введите название книги: ");
+            name = GetInputText();
+            Console.Write("Введите имя автора: ");
+            nameAuthor = GetInputText();
+            Console.Write("Введите фамилию автора: ");
+            surnameAuthor = GetInputText();
+            author = nameAuthor + " " + surnameAuthor;
+            Console.Write("Введите количество страниц: ");
+            yearOfRelease = GetInputDate();
+
+            if (name == null || author == null || yearOfRelease == 0)
+            {
+                Console.WriteLine("Ошибка. Введены не коректные данные");
+            }
+            else
+            {
+                _books.Add(new Book(name, author, yearOfRelease));
+                Console.WriteLine("Книга добавлена");
+            }
+        }
+
+        public void RemoveBook()
+        {
+            Console.WriteLine("Удалить книгу");
+
+            if (TryGetBook(out Book book))
+            {
+                _books.Remove(book);
+            }
+        }
+
+        public void ShowBooks()
+        {
+            Console.WriteLine("1. Показать все книги." +
+                "\n2. Показать книги по параметрам");
+            string userInput = Console.ReadLine();
+
+            if (userInput == "1")
+            {
+                ShowAllBooks();
+            }
+            else if (userInput == "2")
+            {
+                FindBookForParameter();
+            }
+        }
+
+        private bool TryGetBook(out Book book)
+        {
+            Console.Write("Введите номер удаляемой книги: ");
+            bool isNumber = int.TryParse(Console.ReadLine(), out int inputID);
+
+            if (isNumber == false)
+            {
+                Console.WriteLine("Ошибка! Вы ввели не коректные данные.");
+                book = null;
+                return false;
+            }
+            else if (inputID > 0 && inputID - 1 < _books.Count)
+            {
+                book = _books[inputID - 1];
+                Console.WriteLine("Операция успешно выполнена.");
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Книга с таким id отсутствует.");
+                book = null;
+                return false;
+            }
+        }
+
+        private void ShowAllBooks()
+        {
+            foreach (var book in _books)
+            {
+                Console.WriteLine($"Книга: {book.Name}. Автор: {book.Author}. Количество страниц: {book.Number_of_pages}");
+            }
+        }
+
+        private void FindBookForParameter()
+        {
+            Console.WriteLine("1. Найти книгу по названию." +
+                            "\n2. Найти книгу по автору" +
+                            "\n3. Найти книгу по количеству страниц");
+            string userInput = Console.ReadLine();
+
+            switch (userInput)
+            {
+                case "1":
+                    FindByName();
+                    break;
+                case "2":
+                    FindByAuthor();
+                    break;
+                case "3":
+                    FindByYearOfRelease();
+                    break;
+                default:
+                    Console.WriteLine("Такой команды нету. Повторите попытку");
+                    break;
+            }
+        }
+
+        private void FindByYearOfRelease()
+        {
+            Console.Write("Введите каличество страниц: ");
+            int Date = Convert.ToInt16(Console.ReadLine());
+
+            foreach (var book in _books)
+            {
+                if (Date == book.Number_of_pages)
+                {
+                    Console.WriteLine($"Книга: {book.Name}. Автор: {book.Author}. Количество страниц: {book.Number_of_pages}");
+                }
+            }
+        }
+
+        private void FindByAuthor()
+        {
+            Console.Write("Введите имя и фамилию автора: ");
+            string author = Console.ReadLine();
+
+            foreach (var book in _books)
+            {
+                if (author.ToLower() == book.Author.ToLower())
+                {
+                    Console.WriteLine($"Книга: {book.Name}. Автор: {book.Author}. Количество страниц : {book.Number_of_pages}");
+                }
+            }
+        }
+
+        private void FindByName()
+        {
+            Console.Write("Введите название книги: ");
+            string nameBook = Console.ReadLine();
+
+            foreach (var book in _books)
+            {
+                if (nameBook.ToLower() == book.Name.ToLower())
+                {
+                    Console.WriteLine($"Книга: {book.Name}. Автор: {book.Author}. Количество страниц: {book.Number_of_pages}");
+                }
+            }
+        }
+
+        private int GetInputDate()
+        {
+            int maxLength = 4;
+            bool isNumber = int.TryParse(Console.ReadLine(), out int yearOfRelease);
+
+            if (isNumber == true && yearOfRelease >= maxLength)
+            {
+                Console.WriteLine("Дейстие выполнено.");
+                return yearOfRelease;
+            }
+            else
+            {
+                Console.WriteLine("Введены некоретные данный поторите попытку.");
+                yearOfRelease = 0;
+                return yearOfRelease;
+            }
+        }
+
+        private string GetInputText()
+        {
+            string text = Console.ReadLine();
+
+            foreach (char symbol in text)
+            {
+                if (char.IsLetter(symbol) == false)
+                {
+                    Console.WriteLine("Введены некоретные данный поторите попытку.");
+                    return null;
+                }
+            }
+
+            return text;
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Vault vault = new Vault();
+            bool isWork = true;
+
+            while (isWork)
+            {
+                Console.WriteLine("Хранилище книг" +
+                    "\n1. Добавить книгу" +
+                    "\n2. Убрать книгу" +
+                    "\n3. Показать книги" +
+                    "\n4. Выход.");
+                Console.Write("Действие: ");
+                string userInput = Console.ReadLine();
+                Console.Clear();
+
+                switch (userInput)
+                {
+                    case "1":
+                        vault.AddBoock();
+                        break;
+                    case "2":
+                        vault.RemoveBook();
+                        break;
+                    case "3":
+                        vault.ShowBooks();
+                        break;
+                    case "4":
+                        Console.WriteLine("Программа закончила работу");
+                        isWork = false;
+                        break;
+                    default:
+                        Console.WriteLine("Ошибка. Введены не коректные данные");
+                        break;
+                }
+            }
+        }
+    }
+}

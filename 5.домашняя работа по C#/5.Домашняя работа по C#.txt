@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;// <--добавил для вычисления даты
+using System.Text.RegularExpressions;
+//1.Сжать массив, удалив из него все 0 и, заполнить освободившиеся справа элементы значениями –1
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //int[] mas = new int[10]; //на выбор можно рандомно заполнить массив
+            //Random random = new Random();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    mas[i] = random.Next(10);
+            //    Console.Write(mas[i] + " ");
+            //}
+            //Console.WriteLine();
+            int[] mas = { 1, 0, 2, 3, 0, 0, 4, 5, 0, 6, 7, 8, 9, 0, 0, 0, 0 };//а можно заданный 
+            foreach (int item in mas) { Console.Write(item + " "); }
+            Console.WriteLine();
+            int zero = 0;
+            for (int i = 0; i < mas.Length; i++) { if (mas[i] == 0) zero++; else mas[i - zero] = mas[i]; }
+            for (int i = mas.Length - zero; i < mas.Length; i++) { mas[i] = -1; }
+            foreach (int item in mas) { Console.Write(item + " "); }  Console.WriteLine();
+        }
+    }
+}
+****************************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;// <--добавил для вычисления даты
+using System.Text.RegularExpressions;
+//2.Преобразовать массив так, чтобы сначала шли все
+//отрицательные элементы, а потом положительные
+//(0 считать положительным)
+namespace ConsoleApp3
+{
+
+    class Program
+    {
+        public static void Dodatni_Videmni(int[] Arr)
+        {
+            int tmp;
+            bool exchanged;
+            do
+            {
+                exchanged = false;
+                for (int i = 0; i < Arr.Length - 1; i++)
+                {
+                    if (Arr[i] >= 0 && Arr[i + 1] < 0)
+                    {
+                        tmp = Arr[i];
+                        Arr[i] = Arr[i + 1];
+                        Arr[i + 1] = tmp;
+                        exchanged = true;
+                    }
+                }
+            } while (exchanged);
+        }
+        static void Main(string[] args)
+        {
+            int[] mas = { 1, -9, 2, 3, -7, 0, 4, 5, -5, 6, 7, 8, 9, 0, -3, -1, 0 };
+            foreach (int item in mas) { Console.Write(item + " "); }
+            Console.WriteLine();
+            Dodatni_Videmni(mas);
+            foreach (int temp in mas)
+            {
+                Console.Write(temp + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}

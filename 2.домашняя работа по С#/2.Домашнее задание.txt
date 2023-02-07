@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;// <--добавил для вычисления даты
+//Задание 1
+//Пользователь вводит шестизначное число. После чего
+//пользователь вводит номера разрядов для обмена цифр.
+//Например, если пользователь ввёл один и шесть — это
+//значит, что надо обменять местами первую и шестую
+//цифры.
+//Число 723895 должно превратиться в 523897.
+//Если пользователь ввел не шестизначное число требуется вывести сообщение об ошибке.
+
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.Write("Введите беззнаковое шестизначное число:  ");
+            int chislo = Convert.ToInt32(Console.ReadLine());
+            if (chislo < 100000 || chislo > 999999)
+            { Console.WriteLine("Ошибка вы вышли за предел шестизначного числа!!!"); }
+            else
+            {
+                Console.WriteLine("Введите через ввод номера разрядов для обмена цифр от 1 до 6:  ");
+                Console.Write("От куда:  ");
+                int number1 = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Куда:  ");
+                int number2 = Convert.ToInt32(Console.ReadLine());
+                char[] charArray = chislo.ToString().ToCharArray();
+                //Кортежи https://metanit.com/sharp/tutorial/2.19.php
+                (charArray[number1 - 1], charArray[number2 - 1]) = (charArray[number2 - 1], charArray[number1 - 1]);
+                Console.Write("Итоговое число: ");
+                Console.WriteLine(charArray);
+            }
+
+        }
+    }
+}
+
+*****************************************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;// <--добавил для вычисления даты
+//Задание 2
+//Пользователь вводит с клавиатуры дату. Приложение должно отобразить название сезона и дня недели.
+//Например, если введено 22.12.2021, приложение должно
+//отобразить Winter Wednesday
+
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.Write("Введите день: ");
+            int day = int.Parse(Console.ReadLine());
+            if (day > 31) { Console.WriteLine("Дата некорректная"); }
+            else Console.Write("Введите месяц: "); 
+            int month = int.Parse(Console.ReadLine());
+            Console.Write("Введите год: ");
+            int year = Convert.ToInt32(Console.ReadLine());
+                if (month > 12) { Console.WriteLine("Дата некорректная"); }
+
+                else if ((day <= 0) || ((day >= 28) && (month == 2)) || ((day > 31) && ((month == 1) ||
+                (month == 3) || (month == 5) || (month == 7) || (month == 8) || (month == 10) || (month == 12))) ||
+                ((day > 30) && ((month == 4) || (month == 6) || (month == 9) || (month == 11))))
+                Console.WriteLine("Дата некоректная");
+
+                if ((month == 12) || (month <= 2)) { Console.Write("Время года - зима\n"); }
+                else if ((month >= 3) && (month <= 5)) { Console.Write("Время года - весна\n"); }
+                else if ((month >= 6) && (month <= 8)) { Console.Write("Время года - лето\n"); }
+                else if ((month >= 9) && (month <= 11)) { Console.Write("Время года - осень\n"); }
+     
+            DateTime dateValue = new DateTime(year, month, day);
+            Console.WriteLine(dateValue.ToString("День недели -"+"dddd"));
+            //Добавил от себя для практики))))
+            Console.WriteLine("Порядковый номер дня в недели - "+(int)dateValue.DayOfWeek);
+            Console.ReadKey();
+
+        }
+    }
+}
+******************************************************************************************************

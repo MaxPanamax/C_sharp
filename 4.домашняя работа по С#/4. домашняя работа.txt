@@ -1,0 +1,93 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;// <--добавил для вычисления даты
+using System.Text.RegularExpressions;
+/*Regex.Matches - регулярные выражения. https://metanit.com/sharp/tutorial/7.4.php */
+//Задание 1
+//Пользователь вводит с клавиатуры три числа. Необходимо подсчитать сколько раз последовательность из этих
+//трёх чисел встречается в массиве.
+//Например:
+//пользователь ввёл: 7 6 5;
+//массив: 7 6 5 3 4 7 6 5 8 7 6 5;
+//количество повторений последовательности: 3.
+
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //int[] arr = new int[100]; //на выбор можно рандомно заполнить массив
+            //Random random = new Random();
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    arr[i] = random.Next(10);
+            //    Console.Write(arr[i] + " ");
+            //}
+            //Console.WriteLine();
+            int[] arr = { 2, 3, 4, 5, 6, 7, 2, 3, 4, 1, 2, 3, 4, 5, 6, 7 };//готовый массив 
+            Console.WriteLine("Ваш массив : ");
+            Console.WriteLine(" 2, 3, 4, 5, 6, 7, 2, 3, 4, 1, 2, 3, 4, 5, 6, 7  ");
+
+            string str_mas = null;
+            for (int i = 0; i < arr.Length; ++i)
+            { str_mas += arr[i].ToString(); }
+            Console.WriteLine(str_mas);
+            Console.Write("Введите число 1 :  ");
+            int chisloA = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите число 2 :  ");
+            int chisloB = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите число 3 :  ");
+            int chisloC = Convert.ToInt32(Console.ReadLine());
+            int[] arr2 = { chisloA, chisloB, chisloC };
+            string str = string.Join("", arr2); //формирую итоговую строку из массива чисел
+            Console.WriteLine("ваше число :  " + str);
+            Console.WriteLine("Число вхождений :  ");
+            Console.WriteLine("Количество повторений последовательности чисел "
+                + str + " в массиве равно " + Regex.Matches(str_mas, str).Count);  
+        }
+    }
+}
+***************************************************************************
+//Работа в классе
+*************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;// <--добавил для вычисления даты
+using System.Text.RegularExpressions;
+
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //пользователь с клавиатуры вводит длину линии, символ заполнитель.направление линии(горизантальная вертикальная). 
+            //программа отображает линии п заданным параметрам
+            //1 задача
+            Console.Write("Введите количество:  ");
+            int chisloA = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите символ:  ");
+            char chisloB = Convert.ToChar(Console.ReadLine());
+            Console.Write("Введите направление, если горезонтальное то (-), если вертикально то любой символ:  ");
+            char chisloC = Convert.ToChar(Console.ReadLine());
+            if (chisloC != '-') { for (int i = 0; i < chisloA; i++) { Console.WriteLine(chisloB); } }
+            else { for (int i = 0; i < chisloA; i++) { Console.Write(chisloB); } }Console.WriteLine();
+            //Создайте приложение коорое отображает количество четных ,нечетных уникальлных элементов массива
+            //2 задача
+            int[] mass = {3,4,5,4,3,2,6,7,8,9};
+            foreach (int item in mass) {Console.Write(item + " "); }Console.WriteLine();
+                int count = 0; int count1 = 0;
+            for (int i = 0; i < mass.Length; i++) {if ((i % 2) != 0) { count++; } else { count1++; }}
+            Console.WriteLine("четные-" + count); Console.WriteLine("нечетные-" + count1);
+            mass.GroupBy(i => i);Console.WriteLine("Колмчество уникальных элементов "
+                + mass.GroupBy(i => i).Where(i => i.Count() == 1).Count());
+        }
+    }
+}

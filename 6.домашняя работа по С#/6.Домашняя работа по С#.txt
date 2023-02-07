@@ -1,0 +1,98 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+//1.Написать программу, которая предлагает пользователю ввести число и считает, сколько раз это число
+//встречается в массиве.
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //1-й варииант решения //int[] tempArr1 = arr.Where(i => i==1).Count;//найти в массиве 1(или переменную)
+            int[] mas = { 1, -9, 2, 3, -7, 0, 4, 5, -5, 6, 7, 8, 9, 0, -3, -1, 0 };
+            Console.WriteLine("Массив: ");
+            foreach (int item in mas) { Console.Write(item + " "); }
+            Console.WriteLine();
+            Console.WriteLine("Введите искомое число: ");
+            int num = Convert.ToInt32(Console.ReadLine());
+            int count = 0;
+            foreach (int item in mas) { if (item == num) { count++; } }
+            Console.WriteLine("Колличество совпадений: " + count);
+
+            //2-й вариант решения но толко для положительных чисел
+            int[] mas1 = { 1, 9, 2, 3, 7, 0, 4, 5, 5, 6, 7, 8, 9, 0, 3, 1, 0 };
+            Console.WriteLine("Массив: ");
+            foreach (int item in mas1) { Console.Write(item + " "); }
+            Console.WriteLine();
+            string massStr = String.Join(", ", mas1);
+            Console.WriteLine("Введите что надо найти: ");
+            string mas2 = Console.ReadLine();
+            // RegexOptions.IgnoreCase-игнорирует регистр но не знак))))))))))))))))))))
+            int count2 = Regex.Matches(massStr, mas2).Count;
+            Console.WriteLine($"Кол-во совподений без знака: {count2}");
+        
+        }
+    }
+
+}
+*************************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+//2.В двумерном массиве порядка M на N поменяйте
+//местами заданные столбцы.
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        static void Swap(ref int a, ref int b)
+        {
+            int t = a;
+            a = b;
+            b = t;
+        }
+        static void SwapColumns(int[,] array,int stolb1,int stolb2)//от куда и какой столб куда
+        {
+           
+            for (int i = 0; i < array.GetLength(0); i++)
+                Swap(ref array[i, stolb1], ref array[i, stolb2]);
+        }
+          static void Main(string[] args)
+          {
+            int[,] array = { {5,3,4,6}, {3,2,1,7} };
+            Console.WriteLine("Изначальный массив ");
+            foreach (int i in Enumerable.Range(0, array.GetLength(0)))
+            {
+                foreach (int j in Enumerable.Range(0, array.GetLength(1)))
+                {
+                    Console.Write(array[i, j]);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("Выберите какие столбы поменять местами осчет от 0: ");
+            Console.WriteLine("Первый: ");int stolb1 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Второй: "); int stolb2 = Convert.ToInt32(Console.ReadLine());
+            SwapColumns(array,stolb1,stolb2);//от куда и какой столб куда
+            Console.WriteLine("Конечный массив ");
+            foreach (int i in Enumerable.Range(0, array.GetLength(0)))
+            {
+                foreach (int j in Enumerable.Range(0, array.GetLength(1)))
+                {
+                    Console.Write(array[i, j]);
+                }
+                Console.WriteLine();
+            }
+          }
+    }
+}
+**********************************************************
+

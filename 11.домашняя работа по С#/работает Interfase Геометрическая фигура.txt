@@ -1,0 +1,621 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+//Задание 2
+//Разработать абстрактный класс Геометрическая Фигура с полями ПлощадьФигуры и ПериметрФигуры.
+//Реализовать интерфейс ПростойНУгольник, который имеет свойства: Высота, Основание, УголМежду
+//    ОснованиемИСмежнойСтороной, КоличествоСторон, ДлиныСторон.
+//Реализовать класс СоставнаяФигура который может состоять из любого количества ПростыхНУгольников.
+//Разработать классы-наследники: Треугольник, Квадрат, Ромб, Прямоугольник, Параллелограмм, Трапеция,
+//    Круг, Эллипс и реализовать свойства, которые однозначно определяют объекты данных классов.
+//Для данного класса определить метод нахождения площади фигуры.
+//Предусмотреть варианты невозможности задания фигуры (введены отрицательные длины сторон или при
+//    создании объекта треугольника существует пара сторон, сумма длин которых меньше длины третьей стороны и т.п.)
+//Напишите приложение, демонстрирующее работу с классами 
+
+namespace ConsoleApp12
+{
+
+    interface IFigure
+    {
+        double Area { get; }
+        double Perimeter { get; }
+    }
+    interface IPoligon
+    {
+        double Height { get; }
+        double Basis { get; }
+        double Angle { get; }
+        double SidesQuantity { get; }
+        double SidesLength { get; }
+        double Area { get; }
+        double Perimeter { get; }
+    }
+    [Serializable]
+    public class NoRightAngleException : ApplicationException
+    {
+        public NoRightAngleException() { }
+        public NoRightAngleException(string message) : base(message) { }
+        public NoRightAngleException(string message, Exception inner) : base(message, inner) { }
+        protected NoRightAngleException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
+    }
+    [Serializable]
+    public class NotEqualSidesException : ApplicationException
+    {
+        public NotEqualSidesException() { }
+        public NotEqualSidesException(string message) : base(message) { }
+        public NotEqualSidesException(string message, Exception inner) : base(message, inner) { }
+        protected NotEqualSidesException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
+    }
+    [Serializable]
+    public class NotParallelSidesException : ApplicationException
+    {
+        public NotParallelSidesException() { }
+        public NotParallelSidesException(string message) : base(message) { }
+        public NotParallelSidesException(string message, Exception inner) : base(message, inner) { }
+        protected NotParallelSidesException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
+    }
+    public class PointCoincidenceException : ApplicationException
+    {
+        public PointCoincidenceException() { }
+
+        public PointCoincidenceException(string message) : base(message) { }
+
+        public PointCoincidenceException(string message, Exception inner) : base(message, inner) { }
+
+        protected PointCoincidenceException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+    class Circle : Ellipse
+    {
+
+        protected override void ValidatePoints()
+        {
+            if (FocusInterval >= Interval1 + Interval1)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не круг!!! Существует точечное совпадение.\n\n");
+            }
+        }
+
+
+        public Circle(Point first, Point third)
+            : base(first, first, third) { }
+
+        public override double FocusInterval
+        {
+            get { return 0; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "\n _____________ КРУГ _____\n" +
+                " Два пункта : \n" +
+                " А{0} Б{1} \n\n" +
+                " Радиус окружности = {2}; \n\n" +
+                " ПЛОЩАДЬ = {3}; \n ПЕРИМЕТР = {4}; ",
+                first, third, A, Area, Perimeter);
+        }
+    }
+    class Ellipse : Figure
+    {
+
+        protected Point first = new Point(0, 0);
+        protected Point second = new Point(0, 1);
+        protected Point third = new Point(1, 0);
+
+        protected virtual void ValidatePoints()
+        {
+            if (FocusInterval >= Interval1 + Interval1)
+            {
+                throw new
+                MyExceptions.PointCoincidenceException("Это" +
+                     "не Эллипс!!! Есть точка - линия" +
+                     "Совпадение.\n\n");
+            }
+        }
+
+
+        public Ellipse(Point first, Point second, Point third)
+        {
+            this.first = first.Duplicate(first);
+            this.second = second.Duplicate(second);
+            this.third = third.Duplicate(third);
+        }
+        public virtual double FocusInterval
+        {
+            get { return Distance(first, second); }
+        }
+        public virtual double Interval1
+        {
+            get { return Distance(first, third); }
+        }
+        public virtual double Interval2
+        {
+            get { return Distance(third, second); }
+        }
+        public double A
+        {
+            get { return (Interval1 + Interval2) / 2; }
+        }
+        public double B
+        {
+            get
+            {
+                return Math.Sqrt(Math.Pow(A, 2)
+              - Math.Pow(FocusInterval / 2, 2));
+            }
+        }
+        public override double Area
+        {
+            get { return Math.PI * A * B; }
+        }
+        public override double Perimeter
+        {
+            get
+            {
+                return Math.PI * (3 * (A + B)
+                  - Math.Sqrt((3 * A + B) * (A + 3 * B)));
+            }
+        }
+        public override string ToString()
+        {
+            return string.Format(
+                "\n ____________ ЭЛЛИПС _____________ \n" +
+                " Три пункта : \n" +
+                " А{0} Б{1} К{2} \n\n" +
+                " Интервал фокусировки = {3}; \n интервал1 = {4}; \n" +
+                " интервал2 = {5}; \n\n" +
+                " Большая и малая полуось = {6}; {7}; \n\n" +
+                " ПЛОЩАДЬ = {8}; \n ПЕРИМЕТР = {9}; ",
+                first, second, third, FocusInterval,
+                Interval1, Interval2, A, B, Area, Perimeter);
+        }
+    }
+    public abstract class Figure : Interfaces.IFigure
+    {
+        public abstract double Area { get; }
+        public abstract double Perimeter { get; }
+
+        public double Distance(Point A, Point B)
+        {
+            return Math.Pow(
+                (Math.Pow(Math.Abs((double)B.X - A.X), 2.0)
+                + Math.Pow(Math.Abs((double)B.Y - A.Y), 2.0)), 0.5);
+        }
+        public abstract override string ToString();
+    }
+    class Parallelogram : Trapezium
+    {
+
+        protected override void ValidatePoints()
+        {
+            if (isParallel() == false)
+            {
+                throw new MyExceptions.NotParallelSidesException("Это не параллелограмм!!! Нет пары параллельных сторон. \n\n");
+            }
+            if (Basis1 == 0 || Basis2 == 0 || Side1 == 0 || Side2 == 0)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не параллелограмм!!! Существует точечное совпадение. \n\n");
+            }
+        }
+
+        protected bool isParallel()
+        {
+            bool flag = false;
+            if ((first.Y - second.Y) * (third.X - fourth.X) == (third.Y - fourth.Y) * (first.X - second.X) &&
+                (first.Y - third.Y) * (second.X - fourth.X) == (second.Y - fourth.Y) * (first.X - third.X)) flag = true;
+            else if ((first.Y - second.Y) * (third.X - fourth.X) == (third.Y - fourth.Y) * (first.X - second.X) &&
+                (first.Y - fourth.Y) * (third.X - second.X) == (third.Y - second.Y) * (first.X - fourth.X)) flag = true;
+            else if ((first.Y - third.Y) * (second.X - fourth.X) == (second.Y - fourth.Y) * (first.X - third.X) &&
+                (first.Y - fourth.Y) * (second.X - third.X) == (second.Y - third.Y) * (first.X - fourth.X)) flag = true;
+            return flag;
+        }
+
+
+        public Parallelogram(Point first, Point second, Point third, Point fourth)
+            : base(first, second, third, fourth) { }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "\n ____________ ПАРАЛЛЕЛОГРАММ _______ \n" +
+                " Четыре пункта : \n" +
+                " А{0} Б{1} К{2} Д{3} \n\n" +
+                " Сторона 1 = {4}; \n Сторона 2 = {5}; \n" +
+                " Сторона 3 = {6}; \n Сторона 4 = {7}; \n\n" +
+                " ПЛОЩАДЬ = {8}; \n ПЕРИМЕТР = {9}; ",
+                first, second, third, fourth, Basis1, Basis2, Side1,
+                Side2, Area, Perimeter);
+        }
+    }
+    public class Point
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+
+        public Point(int a, int b)
+        {
+            X = a;
+            Y = b;
+        }
+        public Point Duplicate(Point currentPoint)
+        {
+            Point newPoint = new Point(0, 0);
+            newPoint.X = currentPoint.X;
+            newPoint.Y = currentPoint.Y;
+            return newPoint;
+        }
+        public override string ToString()
+        {
+            return string.Format(" ( {0}, {1} ) ", X, Y);
+        }
+    }
+    class Rectangle : Parallelogram
+    {
+
+        protected override void ValidatePoints()
+        {
+            if (isParallel() == false)
+            {
+                throw new MyExceptions.NotParallelSidesException("Это не прямоугольник!!! Нет пары параллельных сторон. \n\n");
+            }
+            if (isRightAngle() == false)
+            {
+                throw new MyExceptions.NoRightAngleException("Это не прямоугольник!!! Нет прямого угла\n\n");
+            }
+            if (Basis1 == 0 || Basis2 == 0 || Side1 == 0 || Side2 == 0)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не прямоугольник!!! Существует точечное совпадение. \n\n");
+            }
+        }
+
+        protected bool isRightAngle()
+        {
+            bool flag = false;
+
+            if ((first.Y - second.Y) * (first.Y - third.Y) == (-1) * (first.X - third.X) * (first.X - second.X) ||
+                (first.Y - second.Y) * (first.Y - fourth.Y) == (-1) * (first.X - fourth.X) * (first.X - second.X) ||
+                (first.Y - third.Y) * (first.Y - fourth.Y) == (-1) * (first.X - third.X) * (first.X - fourth.X)) flag = true;
+
+            return flag;
+        }
+
+
+        public Rectangle(Point first, Point second,
+            Point third, Point fourth) :
+            base(first, second, third, fourth)
+        { }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "\n ____________ ПРЯМОУГОЛЬНИК _________________________________________\n " +
+                " Четыре пункта : \n" +
+                " А{0} Б{1} К{2} Д{3} \n\n" +
+                " Сторона 1 = {4}; \n Сторона 2 = {5}; \n" +
+                " Сторона 3 = {6}; \n Сторона 4 = {7}; \n\n" +
+                " ПЛОЩАДЬ = {8}; \n ПЕРИМЕТР = {9}; ",
+                first, second, third, fourth, Basis1, Basis2, Side1,
+                Side2, Area, Perimeter);
+        }
+    }
+    class Rhombus : Parallelogram
+    {
+
+        protected override void ValidatePoints()
+        {
+            if (isParallel() == false)
+            {
+                throw new MyExceptions.NotParallelSidesException("Это не ромб!!! Нет пары параллельных сторон. \n\n");
+            }
+            if (Basis1 != Side1)
+            {
+                throw new MyExceptions.NotEqualSidesException("Это не ромб!!! Стороны не равны. \n\n");
+            }
+            if (Basis1 == 0 || Basis2 == 0 || Side1 == 0 || Side2 == 0)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не ромб!!! Существует точечное совпадение. \n\n");
+            }
+        }
+
+
+        public Rhombus(Point first, Point second, Point third, Point fourth)
+            : base(first, second, third, fourth) { }
+
+        public override string ToString()
+        {
+            return string.Format(
+              "\n ____________ РОМБ ____\n" +
+                " Четыре пункта : \n" +
+                " А{0} Б{1} К{2} Д{3} \n\n" +
+                " Сторона 1 = {4}; \n Сторона 2 = {5}; \n" +
+                " Сторона 3 = {6}; \n Сторона 4 = {7}; \n\n" +
+                " ПЛОЩАДЬ = {8}; \n ПЕРИМЕТР = {9}; ",
+                first, second, third, fourth, Basis1, Basis2, Side1,
+                Side2, Area, Perimeter);
+        }
+    }
+    class Square : Rectangle
+    {
+
+        protected override void ValidatePoints()
+        {
+            if (isParallel() == false)
+            {
+                throw new MyExceptions.NotParallelSidesException("Это не квадрат!!! Нет пары параллельных сторон. \n\n");
+            }
+            if (isRightAngle() == false)
+            {
+                throw new MyExceptions.NoRightAngleException("Это не квадрат!!! Нет прямого угла\n\n");
+            }
+            if (Basis1 != Side1)
+            {
+                throw new MyExceptions.NotEqualSidesException("Это не квадрат!!! Стороны не равны. \n\n");
+            }
+            if (Basis1 == 0 || Basis2 == 0 || Side1 == 0 || Side2 == 0)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не квадрат!!! Существует точечное совпадение. \n\n");
+            }
+        }
+
+
+        public Square(Point first, Point second, Point third, Point fourth) : base(first, second, third, fourth) { }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "\n ____________ КВАДРАТ _____ \n" +
+                " Четыре пункта : \n" +
+                " А{0} Б{1} К{2} Д{3} \n\n" +
+                " Сторона 1 = {4}; \n Сторона 2 = {5}; \n" +
+                " Сторона 3 = {6}; \n Сторона 4 = {7}; \n\n" +
+                " ПЛОЩАДЬ = {8}; \n ПЕРИМЕТР = {9}; ",
+                first, second, third, fourth, Basis1, Basis2, Side1,
+                Side2, Area, Perimeter);
+        }
+    }
+    class Trapezium : Figure
+    {
+
+        protected Point first;
+        protected Point second;
+        protected Point third;
+        protected Point fourth;
+
+        protected virtual void ValidatePoints()
+        {
+            bool flag = false;
+
+            if ((first.Y - second.Y) * (third.X - fourth.X) == (third.Y - fourth.Y) * (first.X - second.X)) flag = true;
+            else if ((first.Y - third.Y) * (second.X - fourth.X) == (second.Y - fourth.Y) * (first.X - third.X)) flag = true;
+            else if ((first.Y - fourth.Y) * (third.X - second.X) == (third.Y - second.Y) * (first.X - fourth.X)) flag = true;
+
+            if (flag == false)
+            {
+                throw new MyExceptions.NotParallelSidesException("Это не трапеция!!! Параллельных сторон нет. \n\n");
+            }
+
+            if (Basis1 == 0 || Basis2 == 0 || Side1 == 0 || Side2 == 0)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не трапеция!!! Существует точечное совпадение. \n\n");
+            }
+        }
+
+
+        public Trapezium(Point first, Point second, Point third, Point fourth)
+        {
+            this.first = first.Duplicate(first);
+            this.second = second.Duplicate(second);
+            this.third = third.Duplicate(third);
+            this.fourth = fourth.Duplicate(fourth);
+        }
+        public double Basis1
+        {
+            get
+            {
+                if ((first.Y - second.Y) * (third.X - fourth.X)
+                    == (third.Y - fourth.Y) * (first.X - second.X))
+                    return Distance(first, second);
+                else if ((first.Y - third.Y) * (second.X - fourth.X)
+                    == (second.Y - fourth.Y) * (first.X - third.X))
+                    return Distance(first, third);
+                return Distance(first, fourth);
+            }
+        }
+        public double Basis2
+        {
+            get
+            {
+                if ((first.Y - second.Y) * (third.X - fourth.X)
+                    == (third.Y - fourth.Y) * (first.X - second.X))
+                    return Distance(third, fourth);
+                else if ((first.Y - third.Y) * (second.X - fourth.X)
+                    == (second.Y - fourth.Y) * (first.X - third.X))
+                    return Distance(second, fourth);
+                return Distance(third, second);
+            }
+        }
+        public double Side1
+        {
+            get
+            {
+                if ((first.Y - second.Y) * (third.X - fourth.X)
+                    == (third.Y - fourth.Y) * (first.X - second.X))
+                {
+                    if (Distance(first, third) > Distance(first, fourth))
+                        return Distance(first, fourth);
+                    return Distance(first, third);
+                }
+                else if ((first.Y - third.Y) * (second.X - fourth.X)
+                    == (second.Y - fourth.Y) * (first.X - third.X))
+                {
+                    if (Distance(first, second) > Distance(first, fourth))
+                        return Distance(first, fourth);
+                    return Distance(first, second);
+                }
+                return Distance(first, second);
+            }
+        }
+        public double Side2
+        {
+            get
+            {
+                if ((first.Y - second.Y) * (third.X - fourth.X)
+                    == (third.Y - fourth.Y) * (first.X - second.X))
+                {
+                    if (Distance(second, fourth) > Distance(second, third))
+                        return Distance(second, third);
+                    return Distance(second, fourth);
+                }
+                else if ((first.Y - third.Y) * (second.X - fourth.X)
+                    == (second.Y - fourth.Y) * (first.X - third.X))
+                {
+                    if (Distance(third, fourth) > Distance(second, third))
+                        return Distance(second, third);
+                    return Distance(third, fourth);
+                }
+                return Distance(third, fourth);
+            }
+        }
+        public override double Area
+        {
+            get
+            {
+                double temp = 0;
+                if (Basis1 != Basis2)
+                {
+                    temp = (Math.Pow((Basis1 - Basis2), 2)
+                        + Math.Pow(Side1, 2) - Math.Pow(Side2, 2))
+                        / 2 / (Basis1 - Basis2);
+                }
+                return (Basis1 + Basis2) / 2 * Math.Sqrt(Math.Pow(Side1, 2)
+                    - Math.Pow(temp, 2));
+            }
+        }
+        public override double Perimeter
+        {
+            get { return Basis1 + Basis2 + Side1 + Side2; }
+        }
+        public override string ToString()
+        {
+            return string.Format(
+                "\n ____________ ТРАПЕЦИЯ _______ \n" +
+                " Четыре пункта : \n" +
+                " А{0} Б{1} К{2} Д{3} \n\n" +
+                " Базис 1 = {4}; \n Базис 2 = {5}; \n" +
+                " Сторона 1 = {6}; \n Сторона 2 = {7}; \n\n" +
+                " ПЛОЩАДЬ = {8}; \n ПЕРИМЕТР = {9}; ",
+                first, second, third, fourth, Basis1, Basis2,
+                Side1, Side2, Area, Perimeter);
+        }
+    }
+    class Triangle : Trapezium
+    {
+
+        protected override void ValidatePoints()
+        {
+            double temp1 = (third.X - first.X) * (second.Y - first.Y);
+            double temp2 = (third.Y - first.Y) * (second.X - first.X);
+
+            if (temp1 == temp2)
+            {
+                throw new MyExceptions.PointCoincidenceException("Это не треугольник!!! Существует точечно-линейное совпадение. \n\n");
+            }
+        }
+
+
+        public Triangle(Point first, Point second, Point third)
+            : base(first, second, third, third) { }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "\n ____________ ТРЕУГОЛЬНИК _______ \n" +
+                " Три пункта : \n" +
+                " А{0} Б{1} К{2} \n\n" +
+                " Сторона 1 = {3}; \n Сторона 2 = {4}; \n" +
+                " Сторона 3 = {5}; \n\n" +
+                " ПЛОЩАДЬ = {6}; \n ПЕРИМЕТР = {7}; ",
+                first, second, third, Basis1, Side1, Side2,
+                Area, Perimeter);
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Введите координаты точки А1:");
+            int a1 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки А2:");
+            int a2 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки B1:");
+            int b1 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки B2:");
+            int b2 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки C1:");
+            int c1 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки C2:");
+            int c2 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки D1:");
+            int d1 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите координаты точки D2:");
+            int d2 = Convert.ToInt32(Console.ReadLine());
+            Point A = new Point(a1, a2);
+            Point B = new Point(b1, b2);
+            Point C = new Point(c1, c2);
+            Point D = new Point(d1, d2);
+
+            try
+            {
+                Ellipse ellips = new Ellipse(A, B, C);
+                Console.WriteLine(ellips);
+
+                Circle circle = new Circle(A, C);
+                Console.WriteLine(circle);
+
+                Trapezium trapezium = new Trapezium(A, B, C, D);
+                Console.WriteLine(trapezium);
+
+                Triangle trianle = new Triangle(A, B, C);
+                Console.WriteLine(trianle);
+
+                Parallelogram parallelogram = new Parallelogram(A, B, C, D);
+                Console.WriteLine(parallelogram);
+
+                Rectangle rectangle = new Rectangle(A, B, C, D);
+                Console.WriteLine(rectangle);
+
+                Rhombus rhombus = new Rhombus(A, B, C, D);
+                Console.WriteLine(rhombus);
+
+                Square square = new Square(A, B, C, D);
+                Console.WriteLine(square);
+            }
+            catch (ApplicationException e)
+            {
+                Console.WriteLine(" {0} ", e.Message);
+            }
+            finally
+            {
+                Console.WriteLine("\nДосвидания!\n");
+            }
+
+            Console.ReadKey();
+        }
+    }
+
+}
+

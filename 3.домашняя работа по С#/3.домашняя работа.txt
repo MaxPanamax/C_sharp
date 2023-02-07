@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+//using System.Globalization;// <--добавил для вычисления даты
+//1.Даны целые положительные числа A, B, C. Значение
+//этих чисел программа должна запрашивать у пользователя. На прямоугольнике размера A*B размещено
+//максимально возможное количество квадратов со
+//стороной C. Квадраты не накладываются друг на
+//друга. Найти количество квадратов, размещенных на
+//прямоугольнике, а также площадь незанятой части
+//прямоугольника.
+//Необходимо предусмотреть служебные сообщения
+//в случае, если в прямоугольнике нельзя разместить ни
+//одного квадрата со стороной С (например, если значение С превышает размер сторон прямоугольника).
+
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Again:
+            Console.WriteLine("Введите целые положительные числа где A и B стороны прямоугольника,а C квадрата:  ");
+            Console.Write("Введите целое положительное число A:  ");
+            int chisloA = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите целое положительное число B:  ");
+            int chisloB = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите целое положительное число C:  ");
+            int chisloC = Convert.ToInt32(Console.ReadLine());
+            if(chisloC>chisloA||chisloC>chisloB)
+            {
+                Console.WriteLine("Квадрат слишком большой!!! Повторите попытку)))))");goto Again;
+            }
+            else
+            {
+                int result = 0; int result2 = 0; int quantityA = 0; int quantityB = 0;
+                int square_area = chisloC * chisloC;
+                int rectangle_area = chisloA * chisloB;
+                while (chisloA >= chisloC) { chisloA -= chisloC; quantityA++; } //количество квадратов по стороне А
+                while (chisloB >= chisloC) { chisloB -= chisloC; quantityB++; } //количество квадратов по стороне В
+                for (int i = 0; i < quantityA; i++)
+                    result += quantityB;
+                Console.WriteLine("Каличество квадратов(C*C) в прямоугольнике(A*B) = " + result);
+                result2 = rectangle_area - (result * square_area);
+                Console.WriteLine("Остаток площади = " + result2 + " см квадратных");
+            }
+        }
+    }
+}
+***********************************************************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+//using System.Globalization;// <--добавил для вычисления даты
+//2.Начальный вклад в банке равен 10000 руб. Через
+//каждый месяц размер вклада увеличивается на P
+//процентов от имеющейся суммы (P — вещественное
+//число, 0 < P < 25). Значение Р программа должна получать у пользователя. По данному P определить через
+//сколько месяцев размер вклада превысит 11000 руб,
+//и вывести найденное количество месяцев K (целое
+//число) и итоговый размер вклада S (вещественное
+//число).
+
+namespace ConsoleApp3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        Again:
+            Console.Write("Введите целое положительное число процентов % условия 0< % <25:  ");
+            double proc = Convert.ToDouble(Console.ReadLine());
+            if (proc < 0 || proc > 25) { Console.WriteLine("Вышли за рамки условий по процентов!!!"); goto Again; }
+
+            double deposit = 1000;
+            int count = 0;
+            while (deposit < 1100)
+            {
+                deposit += deposit * proc / 100;
+                count++;
+            }
+            //Console.WriteLine("До превышения лимита вклада на сумму 1100р. понадобится: {0} месяца \nсумма вклада составит: {1} руб.", count, deposit);
+            Console.WriteLine("Для превышения лимита вклада в 11000 рублей, необходимо: " +
+            count + " месяца" + "\nСумма вклада составит: " + deposit + " рублей");
+            Console.ReadKey();
+        }
+    }
+}

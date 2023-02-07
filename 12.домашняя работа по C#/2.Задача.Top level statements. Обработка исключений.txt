@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+// Задание 2
+// Создайте класс «Заграничный паспорт». Вам необходимо хранить информацию о номере паспорта,
+// ФИО владельца, дате выдачи и т.д. Предусмотреть механизмы для инициализации полей класса.
+// Если значение для инициализации неверное, генерируйте исключение.
+
+namespace ConsoleApp2
+{
+    class Program 
+    {
+        class Foreign_Passport
+        {
+            private string last_Name;
+            private int num;
+            private DateTime date_of_issuet;
+            public Foreign_Passport(string last_Name, int num, DateTime date_of_issuet)
+            {
+                if (last_Name.ToCharArray().Where(symbol => char.IsDigit(symbol)).Count() > 0)
+                    throw new Exception("Ошибка!!! введите ФИО");
+                if (num <= 0)
+                    throw new Exception("Ошибка!!! введите номер паспорта");
+                this.last_Name = last_Name ?? throw new ArgumentNullException(nameof(Last_Name));
+                this.num = num;
+                this.date_of_issuet = date_of_issuet;
+            }
+            public string Last_Name
+            {
+                get{return last_Name;}
+                set
+                {
+                    if (value.ToCharArray().Where(symbol => char.IsDigit(symbol)).Count() > 0)
+                        throw new Exception("Ошибка!!! введите ФИО");
+                    else
+                        last_Name = value;
+                }
+            }
+            public int Num
+            {
+                get{return num;}
+                set
+                {
+                    if (num <= 0)
+                    {
+                        throw new Exception("Ошибка!!! введите номер паспорта");
+                    }
+                    else
+                        num = value;
+                }
+            }
+            public DateTime Date_of_issuet
+            {
+                get
+                {
+                    return date_of_issuet;
+                }
+                set
+                {
+                    try
+                    {
+                        date_of_issuet = value;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+            public override string ToString()
+            {
+                return $"\nФИО : {last_Name}\n" +
+                    $"Номер паспорта: {num}\n" +
+                    $"Дата выдачи: {Date_of_issuet.ToShortDateString()}\n";
+                 
+            }
+        }
+        static void Main(string[] args)
+        {
+            try
+            {
+                //Foreign_Passport f_passport = new Foreign_Passport("Правдин", 233456, new DateTime(2015, 8, 10));
+                //Console.WriteLine(f_passport.ToString());
+                //Console.WriteLine();
+                //Foreign_Passport f_passport1 = new Foreign_Passport("Сказкин", 4557765, new DateTime(2007, 7, 7));
+                //Console.WriteLine(f_passport1.ToString());
+                //f_passport1.Last_Name = "непра222"; //проверка на корректность
+                //f_passport1.Num = -45;//проверка на корректность 
+                //f_passport1.Date_of_issuet = new DateTime(2022, 32, 32); //проверка на корректность 
+                Console.WriteLine("Введите требуемые данне: ");
+                void Action()
+                {
+                    Console.WriteLine("\nВведите ФИО: ");
+                    string a = Console.ReadLine();
+                    Console.WriteLine("\nВведите номер паспорта: ");
+                    int b = Int32.Parse(Console.ReadLine());
+                    Console.WriteLine("\nВведите дату выдачи паспорта: ");
+                    DateTime c = DateTime.Parse(Console.ReadLine());
+                    Foreign_Passport f_passport = new Foreign_Passport(a, b, c);
+                    Console.WriteLine(f_passport);
+                }
+                Action();
+                Console.WriteLine("Хотите продолжить нажмите 1, если нет любую: ");
+                int x = Int32.Parse(Console.ReadLine());
+                if(x == 1) { Action(); }
+                else { return; }
+            }
+            catch (Exception excep)
+            {
+                Console.WriteLine(excep.Message);
+            }
+        }
+    }
+}

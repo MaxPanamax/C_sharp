@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+//1.Сжать массив, удалив из него все 0 и, заполнить освободившиеся справа элементы значениями –1
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] mas = { 1, 0, 2, 3, 0, 0, 4, 5, 0, 6, 7, 8, 9, 0, 0, 0, 0 };
+            Console.WriteLine("Массив: ");
+            foreach (int item in mas) { Console.Write(item + " "); }
+            Console.WriteLine();
+            int masLength = mas.Length;
+            int countZero = mas.Where(i => i == 0).Count();
+            mas = mas.Where(i => i != 0).ToArray();
+            Array.Resize(ref mas, masLength);
+            for (int i = masLength - countZero; i < masLength; i++) { mas[i] = -1; }
+            Console.WriteLine("Массив измененный: ");
+            foreach (int item in mas) { Console.Write(item + " "); }
+            Console.WriteLine();
+        }
+    }
+}
+**********************************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+//2.Преобразовать массив так, чтобы сначала шли все
+//отрицательные элементы, а потом положительные
+//(0 считать положительным)
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] mas = { 1, -9, 2, 3, -7, 0, 4, 5, -5, 6, 7, 8, 9, 0, -3, -1, 0 };
+            Console.WriteLine("Массив: ");
+            foreach (int item in mas) { Console.Write(item + " "); } Console.WriteLine();
+            int[] tempMas1 = mas.Where(i => i < 0).ToArray();
+            int[] tempMas2 = mas.Where(i => i >= 0).ToArray();
+            Array.ConstrainedCopy(tempMas1, 0, mas, 0, tempMas1.Length);
+            Array.ConstrainedCopy(tempMas2, 0, mas, tempMas1.Length, tempMas2.Length);
+            Console.WriteLine("Массив измененный: ");
+            foreach (int item in mas) { Console.Write(item + " "); }  Console.WriteLine();
+        }
+    }
+}

@@ -1,0 +1,188 @@
+using System;
+using Z.Expressions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using MathNet.Numerics.LinearAlgebra; //для работы с матрицами
+
+
+//Задание 1
+//Пользователь вводит строку с клавиатуры. Необходимо зашифровать данную строку используя шифр Цезаря.
+//Из Википедии:
+//Шифр Цезаря — это вид шифра подстановки, в котором каждый символ в открытом тексте заменяется
+//символом, находящимся на некотором постоянном числе
+//позиций левее или правее него в алфавите. Например,
+//в шифре со сдвигом вправо на 3, A была бы заменена на
+//D, B станет E, и так далее.
+//Подробнее тут: https://en.wikipedia.org/wiki/Caesar_
+//cipher.
+//Кроме механизма шифровки, реализуйте механизм
+//расшифрования.
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        const string alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+        public static String CaesarCipher(String cipherText, Int32 key)
+        {
+            String cipherTextLow = cipherText.ToLower();
+            Char[] sourceText = new Char[cipherTextLow.Length];
+            Int32 j = 0;
+
+            for (Int32 i = 0; i < cipherTextLow.Length; i++)
+            {
+                if (!Char.IsLetter(cipherTextLow[i]))
+                    sourceText[i] = cipherTextLow[i];
+                else
+                {
+                    sourceText[i] = '|';
+                    while (sourceText[i] == '|')
+                    {
+                        if (cipherTextLow[i] == alphabet[j])
+                        {
+                            try {sourceText[i] = alphabet[j - key]; }
+                            catch { sourceText[i] = alphabet[(j - key) + 33]; }
+                        }
+                        j++;
+                    }
+                    j = 0;
+                }
+            }
+            return new String(sourceText);
+        }
+        private static string encr_Alphabet(int countShift)
+        {
+            char[] key = alphabet.ToCharArray();
+            for (int i = 1; i <= countShift; i++) 
+                for (int j = 0; j <= alphabet.Length - 2; j++)
+                    (key[j], key[j + 1]) = (key[j + 1], key[j]);
+            return string.Join("", key);
+        }
+        private static bool ch_kText(string text) 
+        {
+            bool flag = false;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (!((text[i] >= 1040 && text[i] <= 1103) ||
+                    text[i] == 1105 || text[i] == 1025 ||
+                    text[i] == '.' || text[i] == ',' || text[i] == ' '))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
+        }
+        public static string encr_World(string world, int coun_Shift)
+        {
+            string tempWorld = world;
+            world = world.ToLower();
+            string key = encr_Alphabet(coun_Shift);
+            char[] worlds = world.ToCharArray();
+            for (int i = 0; i < worlds.Length; i++)
+            {
+                for (int j = 0; j < alphabet.Length; j++)
+                {
+                    if (world[i] == ',' || world[i] == '.') { continue; }
+                    else
+                    {
+                        if (world[i] == alphabet[j])
+                        {
+                            worlds[i] = key[j];
+                            if ((tempWorld[i] >= 1040 && tempWorld[i] <= 1071) || tempWorld[i] == 1025)
+                                worlds[i] = char.ToUpper(worlds[i]);
+                            break;
+                        }
+                    }
+                }
+            }
+            return string.Join("", worlds);
+        }
+        //        Задание 2
+        //Создайте приложение, которое производит операции
+        //над матрицами:
+        //■ Умножение матрицы на число;
+        //■ Сложение матриц;
+        //■ Произведение матриц.
+        static void fill_Mass(double[,] mass1, double[,] mass2)
+        {
+           Random rand = new Random();
+           for (int i = 0; i < mass1.GetLength(0); i++)
+           for (int j = 0; j < mass1.GetLength(1); j++)
+          { mass1[i, j] = rand.Next(0, 10); mass2[i, j] = rand.Next(0, 10);}
+        }
+        //            Задание 3
+        //Пользователь с клавиатуры вводит в строку арифметическое выражение. Приложение должно посчитать
+        //его результат.Необходимо поддерживать только две
+        //операции: +и –.
+            static void Main(string[] args)
+        {
+            Console.WriteLine("Введите текст для шифрования(кирилица) ");
+            string text = Console.ReadLine();
+            if (ch_kText(text)) { Console.WriteLine("Недопустимые символы"); }
+            else
+            {
+                Console.WriteLine("Введите колюч для сдвигов(1 - 32) ");
+                if (int.TryParse(Console.ReadLine(), out int countShift) && countShift >= 1 && countShift <= 32)
+                {
+                    text = string.Join(" ", text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries));
+                    string[] str = text.Split(' ');
+                    for (int i = 0; i < str.Length; i++)
+                        str[i] = encr_World(str[i], countShift);
+                    text = string.Join(" ", str);
+                    Console.WriteLine("Зашифрованное текс: " + text);
+                    string[] str2 = text.Split(' ');
+                    for (int i = 0; i < str2.Length; i++)
+                        str2[i] = CaesarCipher(str2[i], countShift);
+                    text = string.Join(" ", str2);
+                    Console.WriteLine("Расшифрованное текст: " + text);
+                }
+                else
+                    Console.WriteLine("Не корректный ввод ключа сдвигов");
+            }
+            ////*******************************************
+            Console.WriteLine("Введите размеры квадратной матрицы");
+            if (int.TryParse(Console.ReadLine(), out int size) && size > 0)
+            {
+                double[,] mass = new double[size, size];
+                double[,] mass2 = new double[size, size];
+                fill_Mass(mass, mass2);
+                Matrix<double> matrix_A = Matrix<double>.Build.DenseOfArray(mass);
+                Console.WriteLine("Матрица A"); Console.WriteLine(matrix_A);
+                Matrix<double> matrix_B = Matrix<double>.Build.DenseOfArray(mass2);
+                Console.WriteLine("Матрица Б"); Console.WriteLine(matrix_B);
+                Console.WriteLine("Умножение матриц"); Console.WriteLine(matrix_A * matrix_B);
+                Console.WriteLine("Сложение матрицы"); Console.WriteLine(matrix_A + matrix_B);
+                Console.WriteLine("Введите число для умножения на матрицу ");
+                if (int.TryParse(Console.ReadLine(), out int number))
+                {
+                    Console.WriteLine("Умножение матрицы A на число " + number); Console.WriteLine(matrix_A * number);
+                    Console.WriteLine("Умножение матрицы B на число " + number); Console.WriteLine(matrix_B * number);
+                }
+                else { Console.WriteLine("Не корректный ввод!"); }
+            }
+            else { Console.WriteLine("Не корректный ввод!"); }
+            //********************************************************************
+
+            Console.WriteLine("Введите арифметического выражения(тлько + и -)");
+            string arithmetic_exp = Console.ReadLine();
+            bool flag = false; 
+            for (int i = 0; i < arithmetic_exp.Length; i++)
+            {
+                if (!((arithmetic_exp[i] >= 48 && arithmetic_exp[i] <= 57) ||
+                    arithmetic_exp[i] == 43 || arithmetic_exp[i] == 45))
+                {flag = true;break;}
+            }
+            if (flag) { Console.WriteLine("Недопустимые символы "); }
+               
+            else
+            {
+                try{Console.WriteLine(arithmetic_exp + " = " + Eval.Execute<int>(arithmetic_exp));}
+                catch (Exception){Console.WriteLine("Ошибка!");}
+            }
+        }
+    }
+}

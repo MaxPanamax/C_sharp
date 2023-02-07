@@ -1,0 +1,65 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+
+//Задание 1
+//Создайте класс «Веб-сайт». Необходимо хранить в
+//полях класса: название сайта, путь к сайту, описание
+//сайта, ip адрес сайта. Реализуйте методы класса для ввода
+//данных, вывода данных, реализуйте доступ к отдельным
+//полям через методы класса.
+
+
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        class Website
+        {
+            string name_site;
+            string address_website;
+            string website_description;
+            string ip_of_the_website;
+           
+            public Website(string name_site, string address_website, string website_description,
+                string ip_of_the_website)
+            { this.name_site = name_site;this.address_website = address_website;
+                this.website_description = website_description;this.ip_of_the_website = ip_of_the_website; }
+            //1-й вариант
+            public string Get_name_site() {{ return string.Format("Имя сайта: " + name_site); }}
+            public string Get_address_website() { return string.Format("Адрес веб-сайта: " + address_website); }
+            public string Get_website_description(){ return string.Format("Описание веб-сайта: " + website_description);}
+            public string Get_ip_of_the_website() { return string.Format("IP адрес веб-сайта: " + ip_of_the_website); }
+            //2-й вариант
+            public string Name_site { get{ return name_site; }set { this.name_site = value; } }
+            public string Address_website { get { return address_website; } set { this.address_website = value; } }
+            public string Website_description { get { return website_description; } set { this.website_description = value; } }
+            public string Ip_of_the_website { get { return ip_of_the_website; } set { this.ip_of_the_website = value; } }
+        
+        }
+        static void Main(string[] args)
+        {
+            //1-й варант
+            Website website = new Website("\nГостиница Калиниград",
+                "\n https://hotel.kaliningrad.ru/kaliningrad/?ysclid=l6ibucanhs945398947",
+                "\nпредлагают не только комфортное пребывание, но и весь комплекс услуг:" +
+                " \nсалон красоты, прачечная, химчистка, камера хранения и бесплатная парковка" +
+                " \nна территории гостиницы. Меню ресторана и бара рассчитаны на вкус любого путешественника.",
+                "\nIP-адрес v4 - 31.31.196.31  Хост - hotel.kaliningrad.ru");
+            Console.WriteLine(website.Get_website_description());
+            Console.WriteLine(website.Get_ip_of_the_website());
+            Console.WriteLine(website.Get_name_site());
+            Console.WriteLine(website.Get_address_website());
+            //2-й иариант
+            Console.WriteLine(website.Name_site);
+            Console.WriteLine(website.Address_website);
+            Console.WriteLine(website.Ip_of_the_website);
+            Console.WriteLine(website.Website_description);
+     
+        }
+    }
+}

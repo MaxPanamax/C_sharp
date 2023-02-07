@@ -1,0 +1,256 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using static System.Console;
+
+//Задание 1
+
+//Создайте класс заказы (свойства: номер накладной, дата заказа, клиент, код города,
+//    телефон, город, количество, стоимость). Создайте коллекцию из не менее 10 заказов.
+
+//1.	Найдите всех клиентов, у которых были заказы, превосходящие по сумме величину X
+//2.	Найти самый дорогой заказ, самый дешевый. Посчитать сумму всех продаж и среднюю 
+//стоимость всех заказов, среднюю цену одного товар (сумма всех стоимостей/сумму всех товаров).
+//3.Для каждого клиента составьте список заказов. Сделайте задания с использованием группировки
+//    с сортировкой и без.
+//4.	Сгруппируйте всех клиентов сначала по городам затем по стоимости заказа.
+//5.	Сгруппируйте всех клиентов по коду города c помощью вложенного запроса.
+//6.	Сгруппируйте заказы по группам «дешевые», «средняя цена», «дорогие».
+//Границы каждой группы задайте сами.
+//7.	Добавьте к городу название страны (создайте новые поля).
+//8.Создайте новое поле: цена 1 единицы товара(стоимость / на количество)
+//9.Сгруппируйте все продажи по кварталам.
+//10.	Рассчитайте среднюю стоимость заказов каждого города 
+
+namespace Ponomarenko_HW_LINQ
+{
+    class Program
+    {
+        public class Order
+        {
+            public int NumberInvoice { get; set; }
+            public DateTime Date { get; set; }
+            public string Customer { get; set; }
+            public int KodCity { get; set; }
+            public int Telephone { get; set; }
+            public string City { get; set; }
+            public int Num { get; set; }
+            public int Price { get; set; }
+            public string Country { get; set; }
+            public Order(int numberInvoice, DateTime date, string customer, int kodCity, int telephone, string city, int num, int price)
+            {
+                NumberInvoice = numberInvoice;
+                Date = date;
+                Customer = customer;
+                KodCity = kodCity;
+                Telephone = telephone;
+                City = city;
+                Num = num;
+                Price = price;
+            }
+            public override string ToString() => $"NumberInvoice:{NumberInvoice}, " +
+                $"Date:{Date}, Customer:{Customer}, KodCity:{KodCity}, Telephone:{Telephone}," +
+                $" City:{City}, Num:{Num}, Price:{Price}";
+        }
+        static void Main(string[] args)
+        {
+            var orders = new[]
+  {new Order(1,new DateTime(2021, 1, 1), "Apple",  7, 123456789, "Moscow", 12, 237000 ),
+            new Order(2, new DateTime(2021, 2, 1), "Yandex", 7, 123456789, "Moscow", 12, 43000),
+            new Order(3, new DateTime(2021, 3, 1), "Microsoft", 1, 123456789, "NewYork", 122, 53000),
+            new Order(4, new DateTime(2021, 4, 1), "Google", 1, 123456789, "NewYork", 312, 63000),
+            new Order(5, new DateTime(2021, 5, 1), "Google", 0, 123456789, "London", 125, 73000),
+            new Order(6, new DateTime(2022, 6, 1), "Apple", 0, 123456789, "London", 232, 83000),
+            new Order(7, new DateTime(2021, 7, 1), "Yandex", 2, 123456789, "Paris", 125, 93000),
+            new Order(8, new DateTime(2021, 8, 1), "Microsoft", 2, 123456789, "Paris", 512, 123000),
+            new Order(9, new DateTime(2022, 9, 1), "Apple", 3, 123456789, "Toronto", 612, 223000),
+            new Order(10, new DateTime(2021,10, 1),"Google", 3, 123456789, "Toronto", 712, 243000),
+            new Order(11, new DateTime(2021,11, 1),"Microsoft", 7, 123456789, "Moscow", 812, 231000),
+            };
+            //******************** задание №1 *********************************
+            WriteLine("\n Задание №1*********************************\n");
+            var orderZakaz = orders.Where(i => i.Num > 200).Select(i => i);
+            foreach (var i in orderZakaz)
+            {
+                WriteLine("\nКлиент у которого заказ боьше 200: " +
+                    i.Customer + "-" + i.City + "- Заказов: " + i.Num);
+            }
+            //********************* задание №2 **********************************
+            WriteLine("\n Задание №2*********************************\n");
+            var orderMax1 = from i in orders
+                            where i.Price ==
+                           (from b in orders select b.Price).Max()
+                            select i;
+
+            foreach (var i in orderMax1)
+            {
+                WriteLine("\n Самый дорогой заказ: " +
+                    i.Customer + "-" + i.City + "- Сумма: " + i.Price);
+            }
+            var orderMax = orders.Max(i => i.Price);
+            WriteLine("\n Самый дорогой заказ(второй способ):" + orderMax);
+
+            var orderMin = from i in orders
+                           where i.Price ==
+                            (from b in orders select b.Price).Min()
+                           select i;
+            foreach (var i in orderMin)
+            {
+                WriteLine("\n Самый дешевый заказ: " + i.Customer + "-" + i.City + "- Сумма: " + i.Price);
+            }
+            var orderMin2 = orders.Min(i => i.Price);
+            WriteLine("\n Самый дешевый заказ(второй способ):" + orderMin2);
+            var orderSuma = orders.Sum(i => i.Price);
+            WriteLine("\n Сумма всех продаж: " + orderSuma);
+            var orderCol = orders.Count();
+            WriteLine("\n Средняя стоимость всех заказов:" + orderSuma / orderCol);
+            var orderPrice1 = orders.Sum(i => i.Num);
+            WriteLine("\n Средняя стоимость одного товара: " + orderSuma / orderPrice1);
+            //*************************** Задание №3 *********************************
+            WriteLine("\n Задание №3*****************************************\n");
+            WriteLine("Групировка и сортировка");
+            var orderGroups = orders.OrderBy(i => i.Customer).GroupBy(i => i.Customer);
+            foreach (var i in orderGroups)
+            {
+                WriteLine("{0} - {1}", i.Key, i.Count());
+                foreach (var b in i)
+                {
+                    WriteLine("\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}", b.NumberInvoice, b.Date, b.KodCity, b.Telephone, b.City, b.Num, b.Price);
+                }
+            }
+            WriteLine("Без сортировки");
+            var orderGroups1 = orders.GroupBy(i => i.Customer);
+            foreach (var i in orderGroups1)
+            {
+                    WriteLine("{0} - {1}", i.Key, i.Count());
+                foreach (var b in i)
+                {
+                    WriteLine("\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}", b.NumberInvoice,
+                        b.Date, b.KodCity, b.Telephone, b.City, b.Num, b.Price);
+                }
+            }
+            //*************************** Задание №4 *********************************
+            WriteLine("\n Задание №4**********************************************\n");
+            WriteLine(" Сгруппированны по городам и стоимости: \n");
+            var orderGroup = orders.GroupBy(i => i.City);
+            foreach (var i in orderGroup)
+            {
+                WriteLine("\n{0}-{1}", i.Key, i.Count());
+                foreach (var b in i)
+                { WriteLine("\t{0}", b.Price); }
+            }
+            //*************************** Задание №5 *********************************
+            WriteLine("\n Задание №5*******************************************\n");
+            var orderGroup1 = from i in orders
+                              group i by i.KodCity into b
+                              select new
+                              { Kode = b.Key, Count = b.Count(), Employees = from p in b select p };
+            foreach (var i in orderGroup1)
+            {
+                WriteLine($"{i.Kode}:{i.Count}\n");
+                foreach (var b in i.Employees)
+                {
+                     WriteLine("\t\t{0}\t{1}\t{2}", b.NumberInvoice, b.Date, b.Customer);
+                }
+            }
+            //*************************** Задание №6 *********************************
+            WriteLine("\n Задание №6***********************************************\n");
+            var orderGroup3 = orders.GroupBy(i =>
+            {
+                if (i.Price < 80000) return " Дешёвый заказ: \n" ;
+                if (i.Price >= 80000 && i.Price <= 160000)
+                    return " Средний заказ: \n" ;
+                if (i.Price > 160000) return " Дорогой заказ: \n" ;
+                return " Таких клиентов нет!";
+            });
+            foreach (var i in orderGroup3)
+            {
+                WriteLine("{0} - {1}", i.Key, i.Count());
+                foreach (var b in i)
+                    WriteLine("\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}", b.NumberInvoice,
+                        b.Date, b.KodCity, b.Telephone, b.City, b.Num, b.Price);
+            }
+            //*************************** Задание №7 *********************************
+            WriteLine("\n Задание №7*******************************************\n");
+            WriteLine(" Добавил страну: \n");
+            var ordersCountry = from i in orders
+                           let city = i.City
+                           let country = (i.City == "Moscow") ? "Россия" : (i.City == "Paris") ?
+                           "Франция" : (i.City == "Toronto") ? "Канада" : (i.City == "NewYork") ?
+                           "США" : "Великобритания"
+                           let numberInvoce = i.NumberInvoice
+                           let count = i.Num
+                           let price = i.Price
+                           select new
+                           {
+                               City = city,
+                               Country = country,
+                               NumberInvoce = numberInvoce,
+                               Count = count,
+                               Price = price
+                           };
+            foreach (var i in ordersCountry)
+            {
+                WriteLine("{0}\t\t{1}\t\t{2}\t\t{3}\t\t{4}",
+                    i.City, i.Country, i.NumberInvoce, i.Count, i.Price);
+            }
+            //*************************** Задание №8 *********************************
+            WriteLine("\n Задание №8*****************************************************\n");
+            var ordersUnit_of_goods = from c in orders 
+                            let number = c.NumberInvoice
+                            let date = c.Date
+                            let count = c.Num
+                            let price = c.Price
+                            let unit_of_goods = c.Price / c.Num 
+                            select new
+                            {
+                                Number = number,
+                                Date = date,
+                                Count = count,
+                                Price = price,
+                                Unit_of_goods = unit_of_goods
+                            };
+            foreach (var i in ordersUnit_of_goods)
+            {
+                    WriteLine("\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}", i.Number,
+                    i.Date, i.Count, i.Price, "цена 1 единицы товара-", i.Unit_of_goods);
+            }
+            //*************************** Задание №9 *********************************
+            WriteLine("\n Задание №9***************************************************\n");
+            var ordersDate = orders.GroupBy(i =>
+            {
+                if (i.Date.Month >= 1 && i.Date.Month <= 3)
+                    return "1 квартал";
+                if (i.Date.Month >= 4 && i.Date.Month <= 6)
+                    return "2 квартал";
+                if (i.Date.Month >= 7 && i.Date.Month <= 9)
+                    return "3 квартал";
+                return "4 квартал";
+            });
+            foreach (var i in ordersDate)
+            {
+                Console.WriteLine("{0}. Количество заказов:   {1}", i.Key, i.Count());
+                foreach (var b in i)
+                    Console.WriteLine("\t{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}",
+                        b.NumberInvoice, b.Date, b.KodCity, b.Telephone, b.City, b.Num, b.Price);
+            }
+            //*************************** Задание №10 *********************************
+            WriteLine("\n Задание №10*************************************************\n");
+            var ordersAverage_cost_price = from i in orders
+                                   group i by i.City into b
+                                   select new { Name = b.Key, 
+                                       Count = b.Count(),
+                                       Average_cost_price = b.Average(i => i.Price) };
+            foreach (var i in ordersAverage_cost_price)
+            {
+              WriteLine($"Город: {i.Name}\tСредняя стоимость заказа: {i.Average_cost_price}");
+            }
+        }
+    }   
+
+}

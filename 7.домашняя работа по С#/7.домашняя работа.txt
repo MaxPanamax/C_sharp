@@ -1,0 +1,172 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+//Задание 1
+//Объявить одномерный(5 элементов) массив с именем A и двумерный массив (3 строки, 4 столбца) дробных чисел с именем B. Заполнить одномерный массив
+//А числами, введенными с клавиатуры пользователем, а
+//двумерный массив В случайными числами с помощью
+//циклов. Вывести на экран значения массивов: массива
+//А в одну строку, массива В — в виде матрицы. Найти в
+//данных массивах общий максимальный элемент, минимальный элемент, общую сумму всех элементов, общее
+//произведение всех элементов, сумму четных элементов
+//массива А, сумму нечетных столбцов массива В.
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        Menu:
+            Console.WriteLine("Выберите нужный пункт меню: " +
+                              "\n1.Выберите операцию с одномерным массивом" +
+                              "\n2.Выберите операцию с двумерным массивом");
+            string selection = Console.ReadLine();
+            switch (selection)
+            {
+                case "1":
+                    one_dimensional_array();
+                    Console.WriteLine("Если хотите прдолжить нажмите 1 если нет любую: ");
+                    int num = Convert.ToInt32(Console.ReadLine());
+                    if (num == 1) { goto Menu; }
+                    break;
+                case "2":
+                    two_dimensional_array();
+                    Console.WriteLine("Если хотите прдолжить нажмите 1 если нет любую: ");
+                    int num1 = Convert.ToInt32(Console.ReadLine());
+                    if (num1 == 1) { goto Menu; }
+                    break;
+            }
+        }
+        public static void two_dimensional_array() // работа с двумерным массивом
+        {
+                double[,] B = new double[3, 4]; /*объявляю двумерный массив 3 строки и 4 столбца*/
+                Random ran = new Random();
+                double min = double.MaxValue;
+                double max = double.MinValue;
+                Console.WriteLine("двумерный массив \n");
+                /*инициализирую данный массив случайными числами с помощью циклов*/
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        B[i, j] = ran.Next(1, 10); /*диапозон случайных чисел*/
+                        /*максимальный и минимальный значения массива*/
+                        if (B[i, j] > 0 && B[i, j] < min)
+                        {
+                            min = B[i, j];
+                        }
+                        if (B[i, j] < 0 && B[i, j] > max)
+                        {
+                            max = B[i, j];
+                        }
+                        Console.Write("{0,3}\t", B[i, j]);
+                    }
+                    Console.WriteLine("\n");
+                }
+                Console.WriteLine("Минимальный элемент: " + B.Cast<double>().Min());
+                Console.WriteLine("Максимальный элемент: " + B.Cast<double>().Max());
+                Console.WriteLine("Сумма элементов массива: " + B.Cast<double>().Sum());
+                Console.WriteLine("Произведение элементов массива: " + B.Cast<double>().Aggregate((x, y) => x * y));
+                Console.WriteLine("Сумма не четных столбцов массива (c 1-и): "
+                     + B.Cast<double>().Where((number, index) => (index++ % 2) == 0).Sum());
+            Console.WriteLine("После просмотра для продолжения нажмите ввод");
+            Console.ReadLine();
+        }
+
+        public static void one_dimensional_array() // заполнение массива с клавиатуры
+        {
+                Console.WriteLine("Введите пять элементов массива"); /*вывожу сообщение, чтобы пользователь ввел*/
+                int[] A = new int[5];
+                for (int i = 0; i < 5; i++) /*цикл позволяет ввести с клавиатуры с 0 до 5 элементов массива*/
+                {
+                    A[i] = int.Parse(Console.ReadLine()); /*ввод с клавиатуры*/
+                }
+                Console.WriteLine("Ввывод массива: {0}", String.Join(" ", A)); /*вывод массива на экран*/
+                Console.WriteLine("Сумма элементов массива: " + A.Sum());
+                Console.WriteLine("Максимальный элемент: " + A.Max());
+                Console.WriteLine("Минимальный элемент: " + A.Min());
+                Console.WriteLine("Произведение элементов массив: " + A.Aggregate((x, y) => x * y));
+                Console.WriteLine("Сумма четных элементов массива: " + A.Where(i => i % 2 == 0).Sum());
+                Console.WriteLine("После просмотра для продолжения нажмите ввод");
+                Console.ReadLine(); /*ожидание нажатия на клавишу*/
+        } 
+    }
+}
+***************************************************************************************
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+//Задание 2
+//Дан двумерный массив размерностью 5×5, заполненный случайными числами из диапазона от –100 до 100.
+//Определить сумму элементов массива, расположенных
+//между минимальным и максимальным элементами.
+namespace Ponomarenko_h_w
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            int[,] B = new int[5, 5]; /*объявляю двумерный массив 5 строки и 5 столбца*/
+            Random ran = new Random();
+            int min = int.MaxValue;
+            int max = int.MinValue;
+            Console.WriteLine("двумерный массив \n");
+            /*инициализирую данный массив случайными числами с помощью циклов*/
+            for (int i = 0; i < 5; i++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    B[i, j] = ran.Next(-100, 100); /*диапозон случайных чисел*/
+                    /*максимальный и минимальный значения массива*/
+                    if (B[i, j] > 0 && B[i, j] < min)
+                    {
+                        min = B[i, j];
+                    }
+                    if (B[i, j] < 0 && B[i, j] > max)
+                    {
+                        max = B[i, j];
+                    }
+                    Console.Write("{0,3}\t", B[i, j]);
+                }
+                Console.WriteLine("\n");
+            }
+            Console.WriteLine("Минимальный элемент: " + B.Cast<int>().Min());
+            int Min_B = B.Cast<int>().Min();
+            Console.WriteLine("Максимальный элемент: " + B.Cast<int>().Max());
+            int Max_B = B.Cast<int>().Max();
+
+            var index2 = ( //получили кортедж
+                from i in Enumerable.Range(0, B.GetLength(0))
+                from j in Enumerable.Range(0, B.GetLength(1))
+                where B[i, j] == Min_B
+                select (i, j)
+                ).FirstOrDefault();
+            Console.WriteLine($"Индексы минималного числа отсчет от 0: {index2.i} {index2.j}");
+            var index1 = ( //получили кортедж
+               from i in Enumerable.Range(0, B.GetLength(0))
+               from j in Enumerable.Range(0, B.GetLength(1))
+               where B[i, j] == Max_B
+               select (i, j)
+               ).FirstOrDefault();
+            Console.WriteLine($"Индексы максимального числа отсчет от 0:  {index1.i} {index1.j}");
+
+            int indexMin = (index2.i * B.GetLength(1) + index2.j); //Перевод индекса думерного массива в индекс одномерного(мин. число)
+            int indexMax = (index1.i * B.GetLength(1) + index1.j); //Перевод индекса думерного массива в индекс(макс. число)
+
+            Console.WriteLine("Сумма элементов массива от минимальной до максимальной " +
+                "(не включительно минимальный и максимальный): "
+                     + B.Cast<int>().Where((number, index) => index >
+                     Math.Min(indexMax, indexMin) && index < Math.Max(indexMax, indexMin)).Sum());
+            Console.ReadLine();
+        }
+    }
+}

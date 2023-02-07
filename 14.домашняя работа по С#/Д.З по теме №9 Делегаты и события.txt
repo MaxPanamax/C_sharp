@@ -1,0 +1,259 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management.Instrumentation;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+ 
+//Задание 1.Игра «Автомобильные гонки»
+//Разработать игру "Автомобильные гонки" с использованием делегатов.
+//1. В игре использовать несколько типов автомобилей:
+//спортивные, легковые, грузовые и автобусы.
+//2. Реализовать игру «Гонки». Принцип игры: Автомобили двигаются от старта
+//    к финишу со скоростями, которые изменяются в установленных пределах случайным
+//    образом. Победителем считается автомобиль, пришедший к финишу первым.
+//Рекомендации по выполнению работы
+//1. Разработать абстрактный класс «автомобиль» (класс Car). Собрать в нем все общие
+//    поля, свойства (например, скорость) методы (например, ехать).
+//2.Разработать классы автомобилей с конкретной реализацией конструкторов и методов,
+//    свойств.
+//В классы автомобилей добавить необходимые события (например, финиш).
+//3.Класс игры должен производить запуск соревнований автомобилей, выводить сообщения
+//    о текущем положении автомобилей, выводить сообщение об автомобиле, победившем в 
+//    гонках. Создать делегаты, обеспечивающие вызов методов из классов автомобилей
+//    (например, выйти на старт, начать гонку).
+//4.Игра заканчивается, когда какой-то из автомобилей проехал определенное расстояние
+//    (старт в положении 0, финиш в положении 100). Уведомление об окончании гонки
+//    (прибытии какого-либо автомобиля на финиш) реализовать с помощью событий.
+
+namespace ponomarenko_HW_Races
+{
+    public delegate void DelRace();
+    public delegate bool DelRaceWin();
+    class Program
+    {
+        class BMW_M5 : Car
+        {
+
+
+            public BMW_M5(string name) : base(name)
+            {
+                Random rnd = new Random();
+                speed = rnd.Next(60, 100);
+            }
+
+            public override void Show()
+            {
+                Console.WriteLine($" на старте название машины:  {name} ");
+            }
+            public override void Go()
+            {
+
+
+                this.distance = this.distance + this.speed / 3.6;
+                Console.WriteLine($" {name} скорость машины:  {speed} пройденно:  {this.distance} м");
+                Thread.Sleep(1000);
+
+            }
+
+            public override bool Win()
+            {
+                if (distance >= 100)
+                {
+                    Console.WriteLine($" Победитель: {name}");
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
+        class Lamborghini_Aventador : Car
+        {
+            public Lamborghini_Aventador(string name) : base(name)
+            {
+                Random rnd = new Random();
+                speed = rnd.Next(30, 100);
+            }
+
+            public override void Go()
+            {
+
+                this.distance = this.distance + this.speed / 3.6;
+                Console.WriteLine($" {name} скорость машины: {speed} пройденно: {this.distance} м");
+                Thread.Sleep(1000);
+            }
+
+            public override void Show()
+            {
+                Console.WriteLine($" на старте название машины:  {name} ");
+            }
+            public override bool Win()
+            {
+                if (distance >= 100)
+                {
+                    Console.WriteLine($" Победитель: {name}");
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
+        class PORSCHE_911 : Car
+        {
+            public PORSCHE_911(string name) : base(name)
+            {
+                Random rnd = new Random();
+                speed = rnd.Next(0, 50);
+            }
+
+            public override void Go()
+            {
+
+                this.distance = this.distance + this.speed / 3.6;
+                Console.WriteLine($" {name} скорость машины: {speed} пройденно: {this.distance} м");
+                Thread.Sleep(1000);
+            }
+
+            public override void Show()
+            {
+                Console.WriteLine($" на старте название машины:  {name} ");
+            }
+            public override bool Win()
+            {
+                if (distance >= 100)
+                {
+                    Console.WriteLine($" Победитель: {name}");
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
+        abstract class Car
+        {
+            public event DelRace StartEvent = null;
+            public void InvokeStartEvent()
+            {
+
+                StartEvent.Invoke();
+
+            }
+
+            public event DelRace GoEvent = null;
+            public void InvokeGoEvent()
+            {
+                GoEvent.Invoke();
+
+            }
+
+            public event DelRaceWin WinEvent = null;
+            public void InvokeWinEvent()
+            {
+                WinEvent.Invoke();
+            }
+
+            public string name { get; set; }
+            public int speed { get; set; }
+            public double distance { get; set; }
+
+            public Car()
+            {
+                name = "Имя";
+                speed = 0;
+                distance = 0;
+            }
+            public Car(string name = "Имя")
+            {
+                this.name = name;
+                Random rnd = new Random();
+                speed = rnd.Next(0, 100);
+            }
+            public abstract void Show();
+            public abstract void Go();
+            public abstract bool Win();
+
+        }
+        class Ferrari_F40 : Car
+        {
+            public Ferrari_F40(string name) : base(name)
+            {
+                Random rnd = new Random();
+                speed = rnd.Next(0, 70);
+            }
+
+            public override void Go()
+            {
+
+                this.distance = this.distance + this.speed / 3.6;
+                Console.WriteLine($" {name} скорость машины: {speed} пройденно: {this.distance} м");
+                Thread.Sleep(1000);
+            }
+
+            public override void Show()
+            {
+                Console.WriteLine($" на старте название машины: {name} ");
+            }
+            public override bool Win()
+            {
+                if (distance >= 100)
+                {
+                    Console.WriteLine($" Победитель {name}");
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            PORSCHE_911 porsche_911 = new PORSCHE_911(" PORSCHE-911 ");
+            BMW_M5 bmw_m5 = new BMW_M5(" BMW-M5 ");
+            Lamborghini_Aventador lamborghini_Aventador = new Lamborghini_Aventador(" Lamborghini Aventador ");
+            Ferrari_F40 ferrari_F40 = new Ferrari_F40(" Ferrari F40 ");
+
+
+            bmw_m5.StartEvent += bmw_m5.Show;
+            porsche_911.StartEvent += porsche_911.Show;
+            lamborghini_Aventador.StartEvent += lamborghini_Aventador.Show;
+            ferrari_F40.StartEvent += ferrari_F40.Show;
+
+            bmw_m5.GoEvent += bmw_m5.Go;
+            porsche_911.GoEvent += porsche_911.Go;
+            lamborghini_Aventador.GoEvent += lamborghini_Aventador.Go;
+            ferrari_F40.GoEvent += ferrari_F40.Go;
+
+            bmw_m5.WinEvent += bmw_m5.Win;
+            porsche_911.WinEvent += porsche_911.Win;
+            lamborghini_Aventador.WinEvent += lamborghini_Aventador.Win;
+            ferrari_F40.WinEvent += ferrari_F40.Win;
+
+            bmw_m5.InvokeStartEvent();
+            porsche_911.InvokeStartEvent();
+            lamborghini_Aventador.InvokeStartEvent();
+            ferrari_F40.InvokeStartEvent();
+            System.Threading.Thread.Sleep(2000);
+
+            while (bmw_m5.Win()==false && porsche_911.Win()==
+                false && lamborghini_Aventador.Win()==false && ferrari_F40.Win()==false)
+            {
+
+                bmw_m5.InvokeGoEvent();
+                bmw_m5.InvokeWinEvent();
+
+                lamborghini_Aventador.InvokeGoEvent();
+                lamborghini_Aventador.InvokeWinEvent();
+
+                ferrari_F40.InvokeGoEvent();
+                ferrari_F40.InvokeWinEvent();
+
+                porsche_911.InvokeGoEvent();
+                porsche_911.InvokeWinEvent();
+                Console.Clear();
+            }
+            Console.WriteLine();
+        }
+    }
+
+}
